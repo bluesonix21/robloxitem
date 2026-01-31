@@ -1,46 +1,77 @@
 ---
 title: Terms of Service
+layout: default
 permalink: /terms-of-service/
 ---
 
-# Terms of Service
+<div class="policy-container">
+  <div class="policy-header">
+    <div class="pill">Legal</div>
+    <h1 class="policy-title">Terms of Service</h1>
+    <p class="policy-updated">Last updated: January 31, 2026</p>
+  </div>
 
-Last updated: 2026-01-31
+  <div class="policy-content">
 
 These Terms of Service ("Terms") govern your use of Roblox UGC Creator (the "App").
 
 ## 1) Acceptance
+
 By using the App, you agree to these Terms.
 
-## 2) Accounts
+## 2) Eligibility
+
+You must be allowed to use Roblox OAuth and comply with Roblox's terms. If you are under the applicable age, do not use the App.
+
+## 3) Accounts
+
 You are responsible for your account credentials and all activity on your account.
 
-## 3) User Content
+## 4) User Content
+
 You retain ownership of your content. By using the App, you grant us permission to process your content to provide the service.
 
-## 4) Roblox and Third-Party Services
+## 5) Roblox and Third-Party Services
+
 The App integrates with Roblox Open Cloud and third-party AI services. Their terms and policies also apply.
 
-## 5) Prohibited Use
+## 6) Prohibited Use
+
 You agree not to:
+
 - Upload illegal or infringing content.
 - Attempt to bypass platform restrictions.
 - Abuse or overload the service.
 
-## 6) Payments and Credits
+## 7) Payments and Credits
+
 If credits or subscriptions are offered, they are subject to pricing and usage rules shown in the App.
 
-## 7) Disclaimers
+## 8) Content Moderation
+
+You are responsible for ensuring your content complies with Roblox community standards and applicable laws. We may remove content that violates these Terms.
+
+## 9) Disclaimers
+
 The App is provided "as is" without warranties. We do not guarantee that generated assets will be accepted by Roblox moderation.
 
-## 8) Limitation of Liability
+## 10) Limitation of Liability
+
 To the maximum extent permitted by law, we are not liable for indirect or consequential damages.
 
-## 9) Termination
+## 11) Termination
+
 We may suspend or terminate access for violations of these Terms.
 
-## 10) Contact
-For questions about these Terms:
-- Email: support@yourdomain.com
+## 12) Changes
 
-Replace the email and any placeholders before publishing.
+We may update these Terms. Continued use after changes means you accept the updated Terms.
+
+## 13) Contact
+
+For questions about these Terms:
+
+- Email: mirzasimsek999@gmail.com
+
+  </div>
+</div>
