@@ -3,4 +3,4 @@ description: AI powered Roblox UGC creation studio
 url: https://bluesonix21.github.io
 baseurl: /robloxitem
 markdown: kramdown
-theme: null
+permalink: pretty

@@ -55,11 +55,11 @@ permalink: /
   <div class="grid">
     <div class="card">
       <h4>Privacy Policy</h4>
-      <p><a href="{{ site.baseurl }}/privacy-policy/">View policy</a></p>
+      <p><a href="{{ '/privacy-policy/' | relative_url }}">View policy</a></p>
     </div>
     <div class="card">
       <h4>Terms of Service</h4>
-      <p><a href="{{ site.baseurl }}/terms-of-service/">View terms</a></p>
+      <p><a href="{{ '/terms-of-service/' | relative_url }}">View terms</a></p>
     </div>
   </div>
 </section>
