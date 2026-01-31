@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Roblox UGC Viewer</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #f6f7fb;
+        touch-action: none;
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        touch-action: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://unpkg.com/three@0.160.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script>
+      const state = {
+        canvasSize: 1024,
+        ready: false,
+      };
+
+      const layers = {
+        albedo: { canvas: null, ctx: null, texture: null },
+        metalness: { canvas: null, ctx: null, texture: null },
+        roughness: { canvas: null, ctx: null, texture: null },
+        normal: { canvas: null, ctx: null, texture: null },
+      };
+
+      let renderer;
+      let scene;
+      let camera;
+      let controls;
+      let meshRoot;
+
+      function postMessage(type, payload) {
+        if (window.ViewerBridge && window.ViewerBridge.postMessage) {
+          window.ViewerBridge.postMessage(
+            JSON.stringify({ type, payload: payload || {} })
+          );
+        }
+      }
+
+      function createLayerCanvas(name, fillStyle, isColor = true) {
+        const canvas = document.createElement("canvas");
+        canvas.width = state.canvasSize;
+        canvas.height = state.canvasSize;
+        const ctx = canvas.getContext("2d");
+        ctx.fillStyle = fillStyle;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.colorSpace = isColor
+          ? THREE.SRGBColorSpace
+          : THREE.NoColorSpace;
+        texture.flipY = false;
+        layers[name] = { canvas, ctx, texture };
+      }
+
+      function initLayers() {
+        createLayerCanvas("albedo", "#cfcfd6", true);
+        createLayerCanvas("metalness", "#000000", false);
+        createLayerCanvas("roughness", "#ffffff", false);
+        createLayerCanvas("normal", "#8080ff", false);
+      }
+
+      function initScene() {
+        const root = document.getElementById("root");
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(window.devicePixelRatio || 1);
+        renderer.setSize(root.clientWidth, root.clientHeight, false);
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        root.appendChild(renderer.domElement);
+
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color("#f6f7fb");
+
+        camera = new THREE.PerspectiveCamera(
+          45,
+          root.clientWidth / root.clientHeight,
+          0.1,
+          100
+        );
+        camera.position.set(0, 1.6, 3.2);
+
+        const hemi = new THREE.HemisphereLight(0xffffff, 0x444444, 0.7);
+        scene.add(hemi);
+        const dir = new THREE.DirectionalLight(0xffffff, 0.9);
+        dir.position.set(3, 6, 4);
+        scene.add(dir);
+
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.enablePan = false;
+        controls.minDistance = 1.5;
+        controls.maxDistance = 6;
+
+        window.addEventListener("resize", onResize);
+        animate();
+      }
+
+      function onResize() {
+        if (!renderer || !camera) return;
+        const root = document.getElementById("root");
+        const w = root.clientWidth;
+        const h = root.clientHeight;
+        renderer.setSize(w, h, false);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+      }
+
+      function applyMaterial(mesh) {
+        const material = new THREE.MeshStandardMaterial({
+          map: layers.albedo.texture,
+          metalnessMap: layers.metalness.texture,
+          roughnessMap: layers.roughness.texture,
+          normalMap: layers.normal.texture,
+          metalness: 1.0,
+          roughness: 1.0,
+        });
+        mesh.material = material;
+        mesh.material.needsUpdate = true;
+      }
+
+      function loadModel(url) {
+        if (!url) {
+          createFallbackModel();
+          return;
+        }
+
+        const loader = new THREE.GLTFLoader();
+        loader.load(
+          url,
+          (gltf) => {
+            if (meshRoot) {
+              scene.remove(meshRoot);
+            }
+            meshRoot = gltf.scene;
+            meshRoot.traverse((child) => {
+              if (child.isMesh) {
+                applyMaterial(child);
+              }
+            });
+            scene.add(meshRoot);
+            postMessage("modelLoaded", { url });
+          },
+          undefined,
+          () => {
+            createFallbackModel();
+          }
+        );
+      }
+
+      function createFallbackModel() {
+        if (meshRoot) {
+          scene.remove(meshRoot);
+        }
+        const geometry = new THREE.BoxGeometry(1, 1, 1);
+        const mesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial());
+        applyMaterial(mesh);
+        meshRoot = new THREE.Group();
+        meshRoot.add(mesh);
+        scene.add(meshRoot);
+        postMessage("modelLoaded", { url: "fallback" });
+      }
+
+      function setTextureUrls(textures) {
+        const entries = [
+          { key: "albedo", url: textures.albedo },
+          { key: "metalness", url: textures.metalness },
+          { key: "roughness", url: textures.roughness },
+          { key: "normal", url: textures.normal },
+        ];
+        entries.forEach((entry) => {
+          if (!entry.url) return;
+          const image = new Image();
+          image.crossOrigin = "anonymous";
+          image.onload = () => {
+            const layer = layers[entry.key];
+            if (!layer || !layer.ctx) return;
+            layer.ctx.clearRect(0, 0, state.canvasSize, state.canvasSize);
+            layer.ctx.drawImage(image, 0, 0, state.canvasSize, state.canvasSize);
+            layer.texture.needsUpdate = true;
+          };
+          image.src = entry.url;
+        });
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+        if (controls) controls.update();
+        if (renderer && scene && camera) {
+          renderer.render(scene, camera);
+        }
+      }
+
+      function init() {
+        initLayers();
+        initScene();
+        createFallbackModel();
+        state.ready = true;
+        postMessage("ready", {});
+      }
+
+      window.viewer = {
+        init,
+        loadModel,
+        setTextureUrls,
+      };
+
+      init();
+    </script>
+  </body>
+</html>
