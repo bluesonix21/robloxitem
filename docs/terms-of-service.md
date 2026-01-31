@@ -6,7 +6,7 @@ permalink: /terms-of-service/
 
 <div class="policy-container">
   <div class="policy-header">
-    <div class="pill">Legal</div>
+    <span class="pill">Legal</span>
     <h1 class="policy-title">Terms of Service</h1>
     <p class="policy-updated">Last updated: January 31, 2026</p>
   </div>
