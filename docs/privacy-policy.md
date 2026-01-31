@@ -4,15 +4,7 @@ layout: default
 permalink: /privacy-policy/
 ---
 
-<div class="policy-container">
-  <div class="policy-header">
-    <span class="pill">Legal</span>
-    <h1 class="policy-title">Privacy Policy</h1>
-    <p class="policy-updated">Last updated: January 31, 2026</p>
-  </div>
-
-  <div class="policy-content">
-
+{% capture policy_text %}
 This Privacy Policy explains how Roblox UGC Creator (the "App", "we", "us") collects, uses, and shares information. If you do not agree, do not use the App.
 
 ## 1) Information We Collect
@@ -85,6 +77,16 @@ We may update this Policy. We will post updates on this page and adjust the "Las
 For privacy questions, contact:
 
 - Email: mirzasimsek999@gmail.com
+{% endcapture %}
 
+<div class="policy-container">
+  <div class="policy-header">
+    <span class="pill">Legal</span>
+    <h1 class="policy-title">Privacy Policy</h1>
+    <p class="policy-updated">Last updated: January 31, 2026</p>
+  </div>
+
+  <div class="policy-content">
+    {{ policy_text | markdownify }}
   </div>
 </div>

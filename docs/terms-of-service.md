@@ -4,15 +4,7 @@ layout: default
 permalink: /terms-of-service/
 ---
 
-<div class="policy-container">
-  <div class="policy-header">
-    <span class="pill">Legal</span>
-    <h1 class="policy-title">Terms of Service</h1>
-    <p class="policy-updated">Last updated: January 31, 2026</p>
-  </div>
-
-  <div class="policy-content">
-
+{% capture terms_text %}
 These Terms of Service ("Terms") govern your use of Roblox UGC Creator (the "App").
 
 ## 1) Acceptance
@@ -72,6 +64,16 @@ We may update these Terms. Continued use after changes means you accept the upda
 For questions about these Terms:
 
 - Email: mirzasimsek999@gmail.com
+{% endcapture %}
 
+<div class="policy-container">
+  <div class="policy-header">
+    <span class="pill">Legal</span>
+    <h1 class="policy-title">Terms of Service</h1>
+    <p class="policy-updated">Last updated: January 31, 2026</p>
+  </div>
+
+  <div class="policy-content">
+    {{ terms_text | markdownify }}
   </div>
 </div>
